@@ -35,9 +35,27 @@ public class AppsActivity extends Activity {
             Intent web = new Intent(Intent.ACTION_VIEW, Uri.parse("https://tv.youtube.com/search/test")).setPackage(a.pkg);
             boolean yt = web.resolveActivity(pm) != null;
             String caps = (canSearch ? "search: yes" : "search: no") + (yt ? " · opens tv.youtube.com links" : "");
-            col.addView(Ui.button(this, a.label + "\n" + caps + " · " + a.pkg, v -> test(a)));
+            col.addView(Ui.button(this, a.label + "\n" + caps + " · " + a.pkg, v -> choose(a)));
         }
         col.addView(Ui.button(this, "Open the Log", v -> startActivity(new Intent(this, LogActivity.class))));
+    }
+
+    private void choose(Sources.App a) {
+        new AlertDialog.Builder(this).setTitle(a.label)
+                .setItems(new String[]{"What links does this app accept? (can Game Day open a channel in it directly?)", "Test searching in this app"},
+                        (d, w) -> { if (w == 0) links(a); else test(a); })
+                .show();
+    }
+
+    /** Reads the app's install file on the box: which links / actions it accepts from other apps. */
+    private void links(Sources.App a) {
+        new Thread(() -> {
+            java.util.List<String> found = AppInspector.inspect(this, a.pkg);
+            DiagLog.add("Links " + a.label + " accepts (" + a.pkg + "): " + String.join("  ·  ", found));
+            runOnUiThread(() -> new AlertDialog.Builder(this).setTitle("What " + a.label + " accepts from other apps")
+                    .setMessage(String.join("\n\n", found) + "\n\n(Also saved in the Log. Send me a photo.)")
+                    .setPositiveButton("OK", null).show());
+        }).start();
     }
 
     private void test(Sources.App a) {
