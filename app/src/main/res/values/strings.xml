@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="automation_description">Lets Game Day pick games inside the apps you chose (it reads their screen only while finding a game, or when you ask it to inspect an app), and lets your remote\'s left/right buttons change games while Goal Zone or CFB Red Zone runs.</string>
+</resources>

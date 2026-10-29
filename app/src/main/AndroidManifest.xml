@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- To list the apps on the box so you can pick which one plays each network. -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="QueryAllPackagesPermission" />
+
+    <uses-feature android:name="android.software.leanback" android:required="false" />
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+
+    <application
+        android:label="Game Day Multiview"
+        android:icon="@drawable/icon"
+        android:banner="@drawable/banner_mv"
+        android:theme="@android:style/Theme.DeviceDefault.NoActionBar"
+        android:usesCleartextTraffic="false"
+        android:supportsRtl="true">
+
+        <!-- Game Day Multiview (home screen) -->
+        <activity android:name=".MainActivity" android:exported="true" android:label="Game Day Multiview" android:banner="@drawable/banner_mv">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Goal Zone and CFB Red Zone: their own icons too -->
+        <activity android:name=".GoalZoneActivity" android:exported="true" android:label="Goal Zone"
+            android:banner="@drawable/banner_gz" android:icon="@drawable/icon" android:taskAffinity="com.gameday.tv.goalzone"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".RedZoneActivity" android:exported="true" android:label="CFB Red Zone"
+            android:banner="@drawable/banner_rz" android:icon="@drawable/icon" android:taskAffinity="com.gameday.tv.redzone"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".SourcesActivity" android:exported="false" android:label="Sources" />
+        <activity android:name=".AppsActivity" android:exported="false" android:label="What works" />
+        <activity android:name=".MultiviewActivity" android:exported="false" android:label="Multiview" />
+        <activity android:name=".SetupActivity" android:exported="false" android:label="Setup" />
+        <activity android:name=".LogActivity" android:exported="false" android:label="Log" />
+
+        <service android:name=".BrainService" android:exported="false" />
+
+        <service android:name=".AutomationService" android:exported="true"
+            android:label="Game Day"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data android:name="android.accessibilityservice" android:resource="@xml/automation_service" />
+        </service>
+    </application>
+</manifest>
