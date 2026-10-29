@@ -22,7 +22,7 @@ public class MainActivity extends Activity {
         }
         col.addView(Ui.button(this, "Goal Zone  ·  every NHL goal, OT and power play", v -> go(GoalZoneActivity.class)));
         col.addView(Ui.button(this, "CFB Red Zone  ·  Top 25, SEC and Big Ten", v -> go(RedZoneActivity.class)));
-        col.addView(Ui.button(this, "Multiview  ·  several apps on screen at once (experimental)", v -> go(MultiviewActivity.class)));
+        col.addView(Ui.button(this, "Multiview  ·  your links on screen at once (apps experimental)", v -> go(MultiviewActivity.class)));
         col.addView(Ui.button(this, "Sources  ·  which app plays each network", v -> go(SourcesActivity.class)));
         col.addView(Ui.button(this, "What works on this box  ·  test your apps", v -> go(AppsActivity.class)));
         col.addView(Ui.button(this, "Setup  ·  accessibility switch, remote, timing", v -> go(SetupActivity.class)));

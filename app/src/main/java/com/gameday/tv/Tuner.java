@@ -24,6 +24,18 @@ final class Tuner {
         String appName = Sources.appLabel(c, src.pkg);
         Rect bounds = Multiview.boundsFor(c, mode);   // a tile when Multiview is running, else full screen
 
+        MvPlayerActivity mv = MvPlayerActivity.self;
+        if (mv != null && mv.hasZoneTile(mode)) {
+            String label = what + " · " + req.optString("network");
+            if ("link".equals(src.method) && !src.link.isEmpty()) {
+                mv.playInZoneTile(mode, fill(src.link, away, home), label);
+                DiagLog.add(what + ": playing in its Multiview tile (" + req.optString("network") + " link)");
+                BrainService.result(mode, req.optString("gameId"), true, "");
+            } else {
+                fail(c, req, "in a Multiview tile, " + req.optString("network") + " needs a link: Sources › " + req.optString("network") + " › Open a link");
+            }
+            return;
+        }
         if (!Sources.installed(c, src.pkg)) {
             fail(c, req, appName + " isn't installed. Pick another app for " + req.optString("network") + " under Sources.");
             return;

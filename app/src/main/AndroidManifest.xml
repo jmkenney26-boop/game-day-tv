@@ -16,7 +16,7 @@
         android:icon="@drawable/icon"
         android:banner="@drawable/banner_mv"
         android:theme="@android:style/Theme.DeviceDefault.NoActionBar"
-        android:usesCleartextTraffic="false"
+        android:usesCleartextTraffic="true"
         android:supportsRtl="true">
 
         <!-- Game Day Multiview (home screen) -->
@@ -51,6 +51,10 @@
         <activity android:name=".SourcesActivity" android:exported="false" android:label="Sources" />
         <activity android:name=".AppsActivity" android:exported="false" android:label="What works" />
         <activity android:name=".MultiviewActivity" android:exported="false" android:label="Multiview" />
+        <activity android:name=".MvPlayerActivity" android:exported="false" android:label="Multiview"
+            android:theme="@android:style/Theme.DeviceDefault.NoActionBar.Fullscreen"
+            android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize|screenLayout|uiMode"
+            android:hardwareAccelerated="true" />
         <activity android:name=".SetupActivity" android:exported="false" android:label="Setup" />
         <activity android:name=".LogActivity" android:exported="false" android:label="Log" />
 

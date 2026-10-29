@@ -32,3 +32,8 @@ android {
         checkReleaseBuilds false
     }
 }
+
+dependencies {
+    // Runs the tile script in every frame of a page, including players embedded from other sites.
+    implementation 'androidx.webkit:webkit:1.11.0'
+}

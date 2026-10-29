@@ -42,15 +42,23 @@ final class Multiview {
         save(c, o);
     }
 
-    static int tileCount(Context c) { return "4".equals(config(c).optString("layout")) ? 4 : 2; }
+    static int tileCount(Context c) {
+        try { return Math.max(1, Math.min(4, Integer.parseInt(config(c).optString("layout", "2")))); } catch (Exception e) { return 2; }
+    }
 
     static Rect tileRect(Context c, int i) {
         DisplayMetrics m = new DisplayMetrics();
         ((WindowManager) c.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getRealMetrics(m);
         int w = m.widthPixels, h = m.heightPixels;
-        if (tileCount(c) == 2) {
+        int n = tileCount(c);
+        if (n == 1) return new Rect(0, 0, w, h);
+        if (n == 2) {
             int tw = w / 2, th = tw * 9 / 16, top = (h - th) / 2;
             return new Rect(i * tw, top, (i + 1) * tw, top + th);
+        }
+        if (n == 3) {
+            int bw = w * 2 / 3, bh = bw * 9 / 16, sw = w - bw, sh = sw * 9 / 16, top = (h - bh) / 2;
+            return i == 0 ? new Rect(0, top, bw, top + bh) : new Rect(bw, top + (i - 1) * sh, w, top + i * sh);
         }
         int tw = w / 2, th = h / 2;
         return new Rect((i % 2) * tw, (i / 2) * th, (i % 2 + 1) * tw, (i / 2 + 1) * th);
@@ -58,7 +66,7 @@ final class Multiview {
 
     /** The tile Goal Zone ("gz") or Red Zone ("rz") plays in, while Multiview is running; else full screen. */
     static Rect boundsFor(Context c, String mode) {
-        if (!active(c)) return null;
+        if (!active(c) || MvPlayerActivity.self != null) return null;
         JSONArray t = config(c).optJSONArray("tiles");
         for (int i = 0; t != null && i < tileCount(c); i++) {
             JSONObject tile = t.optJSONObject(i);
@@ -99,7 +107,14 @@ final class Multiview {
             + "   adb reboot\n"
             + "To undo: the same two lines with 0 at the end, then adb reboot.";
 
-    /** Opens every tile: apps in their windows, Goal Zone / Red Zone started (they open games in theirs). */
+    /** Opens the Multiview player (web pages in tiles; apps experimental). */
+    static void open(Context c) {
+        Intent i = new Intent(c, MvPlayerActivity.class);
+        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        c.startActivity(i);
+    }
+
+    /** Old app-window launcher (experimental): every app tile in its own window. */
     static void launch(Context c) {
         setActive(c, true);
         JSONArray t = config(c).optJSONArray("tiles");

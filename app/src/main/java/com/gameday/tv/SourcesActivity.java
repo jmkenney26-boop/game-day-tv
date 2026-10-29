@@ -47,6 +47,21 @@ public class SourcesActivity extends Activity {
     }
 
     private void askLink(String key, Sources.App app) {
+        List<Links.Link> saved = Links.all(this);
+        if (!saved.isEmpty()) {
+            String[] names = new String[saved.size() + 1];
+            for (int i = 0; i < saved.size(); i++) names[i] = saved.get(i).name;
+            names[saved.size()] = "Type a link…";
+            new AlertDialog.Builder(this).setTitle("Link for " + key).setItems(names, (d, w) -> {
+                if (w < saved.size()) { Sources.save(this, key, app.pkg, "link", saved.get(w).url); build(); }
+                else typeLink(key, app);
+            }).show();
+            return;
+        }
+        typeLink(key, app);
+    }
+
+    private void typeLink(String key, Sources.App app) {
         EditText in = new EditText(this);
         in.setHint("https://… use {away} {home} {awayFull} {homeFull} {query}");
         in.setText(Sources.forKey(this, key).link);
