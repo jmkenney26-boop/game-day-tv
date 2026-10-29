@@ -36,7 +36,17 @@ public class MultiviewActivity extends Activity {
             col.addView(Ui.button(this, "Tile " + (i + 1) + ": " + what, v -> pickTile(cfg, idx)));
         }
         col.addView(Ui.section(this, "Go"));
-        col.addView(Ui.button(this, Multiview.active(this) ? "Launch again" : "Launch Multiview", v -> Multiview.launch(this)));
+        col.addView(Ui.button(this, Multiview.active(this) ? "Launch again" : "Launch Multiview", v -> {
+            if (!Multiview.windowsAllowed(this)) {
+                new AlertDialog.Builder(this).setTitle("This box doesn't allow windows yet")
+                        .setMessage("With freeform windows off, Android opens every app full screen on top of each other. "
+                                + "Switch them on first (steps at the bottom of this screen), then launch.")
+                        .setPositiveButton("Launch anyway", (d, w) -> Multiview.launch(this))
+                        .setNegativeButton("Cancel", null).show();
+                return;
+            }
+            Multiview.launch(this);
+        }));
         col.addView(Ui.button(this, "Stop Multiview (back to full screen)", v -> { Multiview.stopAll(this); build(); }));
         col.addView(Ui.section(this, "Switching freeform windows on"));
         col.addView(Ui.text(this, Multiview.ADB_STEPS, 14, Ui.MUTED));

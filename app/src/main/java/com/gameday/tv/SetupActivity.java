@@ -22,6 +22,9 @@ public class SetupActivity extends Activity {
             try { startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)); }
             catch (Exception e) { DiagLog.add("This box has no Accessibility settings screen to open: " + e.getMessage()); }
         }));
+        col.addView(Ui.text(this, "Greyed out? Android 14 blocks this for apps not from the Play Store. Unlocking it needs "
+                + "\"network debugging\" from Developer options. If your box hides that menu, try the button below.", 14, Ui.MUTED));
+        col.addView(Ui.button(this, "Open Developer options (even if the box hides the menu)", v -> openDeveloperOptions()));
         col.addView(Ui.section(this, "2. Remote"));
         boolean arrows = Prefs.getBool(this, "remoteArrows", true);
         col.addView(Ui.button(this, "← / → change games while Goal Zone / Red Zone run: " + (arrows ? "ON" : "OFF")
@@ -40,6 +43,31 @@ public class SetupActivity extends Activity {
             BrainService.settingsChanged(this);
             build();
         }));
+    }
+
+    /** Developer options may be hidden from the menu but still there: try the standard page, then the TV settings app's. */
+    private void openDeveloperOptions() {
+        Intent[] tries = {
+                new Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS),
+                new Intent().setClassName("com.android.tv.settings", "com.android.tv.settings.system.development.DevelopmentActivity"),
+                new Intent().setClassName("com.android.settings", "com.android.settings.Settings$DevelopmentSettingsDashboardActivity"),
+                new Intent().setClassName("com.android.settings", "com.android.settings.DevelopmentSettings"),
+        };
+        for (Intent i : tries) {
+            try {
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+                DiagLog.add("Opened Developer options via " + i);
+                return;
+            } catch (Exception e) {
+                DiagLog.add("Developer options not at " + i + ": " + e.getClass().getSimpleName());
+            }
+        }
+        DiagLog.add("This box doesn't let any app open Developer options.");
+        new AlertDialog.Builder(this).setTitle("Developer options are locked")
+                .setMessage("This box doesn't let any app open Developer options, so the accessibility switch can't be unlocked on it. "
+                        + "Goal Zone and Red Zone still work: they open the right app and search for the game, and you pick it.")
+                .setPositiveButton("OK", null).show();
     }
 
     private void number(LinearLayout col, String key, int def, String label) {

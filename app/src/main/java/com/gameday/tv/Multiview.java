@@ -67,6 +67,12 @@ final class Multiview {
         return null;
     }
 
+    /** Whether this box will put apps in windows at all. */
+    static boolean windowsAllowed(Context c) {
+        return c.getPackageManager().hasSystemFeature("android.software.freeform_window_management")
+                || Settings.Global.getInt(c.getContentResolver(), "enable_freeform_support", 0) == 1;
+    }
+
     /** What this box says about freeform windows. */
     static String check(Context c) {
         PackageManager pm = c.getPackageManager();
